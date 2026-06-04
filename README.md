@@ -1,18 +1,28 @@
-# elabs / Pixal3D — Image to 3D Model Generation
+# elabs / Pixal3D
 
-[![Run on RunPod](https://runpod.io/badge/runpod-hub)](https://runpod.io/console/hub)
+[![Deploy on RunPod](https://img.shields.io/badge/RunPod-Deploy-orange?logo=runpod)](https://console.runpod.io/hub)
+[![CUDA 12.4](https://img.shields.io/badge/CUDA-12.4-green)](https://developer.nvidia.com/cuda-toolkit)
 
-Generate high-quality **3D models** from a single input image using Pixal3D. Outputs OBJ, GLB, with baked textures. Powered by advanced multi-view diffusion and neural surface reconstruction. Runs on RunPod serverless — no network volume required.
+Generate high-quality **3D models from a single input image**. Supports OBJ and GLB export, texture baking, and multiple detail levels. Built on multi-view diffusion + neural surface reconstruction.
+
+![Pixal3D](https://pub-796a08821c1c483aaf5e274e0d03e350.r2.dev/hub-icons/pixal3d.svg)
 
 ## Highlights
 
-- **Single image → full 3D model** with texture baking
-- **OBJ and GLB export** formats supported
-- **Multiple detail levels**: low (fast), medium, high (quality)
-- **Configurable texture resolution**: 512, 1024, 2048
-- **Weights baked into image** — no cold-download delays
-- **12GB+ VRAM required** for high-detail mode
-- **Apache-2.0** licensed
+- Single image to 3D -- no multi-view setup required
+- OBJ + GLB export -- ready for Blender, Unity, Three.js
+- Texture baking -- UV-unwrapped texture maps included
+- Detail levels -- low/medium/high polygon counts
+- Fully serverless -- no network volume required
+
+## Quick Start
+
+```bash
+curl -X POST https://api.runpod.ai/v2/{ENDPOINT_ID}/run \
+  -H "Authorization: Bearer $RUNPOD_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"input": {"image_base64": "<base64 PNG>", "output_format": "glb", "detail_level": "medium"}}'
+```
 
 ## API
 
@@ -21,7 +31,7 @@ Generate high-quality **3D models** from a single input image using Pixal3D. Out
 ```json
 {
   "input": {
-    "image_base64": "<base64-encoded PNG/JPG image>",
+    "image_base64": "<base64 PNG or JPG>",
     "detail_level": "medium",
     "output_format": "glb",
     "texture_resolution": 1024
@@ -33,10 +43,11 @@ Generate high-quality **3D models** from a single input image using Pixal3D. Out
 
 ```json
 {
-  "model_obj_base64": "<base64 OBJ data>",
-  "model_glb_base64": "<base64 GLB data>",
-  "texture_base64": "<base64 texture map>",
-  "wall_time_s": 45.2
+  "model_glb_base64": "<base64 GLB file>",
+  "model_obj_base64": "<base64 OBJ file>",
+  "texture_base64": "<base64 PNG texture>",
+  "detail_level": "medium",
+  "wall_time_s": 45.0
 }
 ```
 
@@ -44,31 +55,25 @@ Generate high-quality **3D models** from a single input image using Pixal3D. Out
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `image_base64` | string | **required** | Base64-encoded input image (PNG or JPG) |
-| `detail_level` | string | `"medium"` | Detail level: `"low"`, `"medium"`, or `"high"` |
-| `output_format` | string | `"glb"` | Output format: `"obj"` or `"glb"` |
-| `texture_resolution` | int | `1024` | Texture resolution in pixels: `512`, `1024`, or `2048` |
+| `image_base64` | string | required | Base64 PNG/JPG input image |
+| `detail_level` | string | `"medium"` | Mesh density: "low", "medium", "high" |
+| `output_format` | string | `"glb"` | Export: "glb", "obj", "both" |
+| `texture_resolution` | int | `1024` | Texture resolution: 512, 1024, 2048 |
+
+## Best Input Images
+
+- Subject isolated on clean/white background
+- Front-facing view
+- Good lighting, no heavy shadows
+- 512x512 to 2048x2048 pixels
+- PNG or JPG format
 
 ## GPU Requirements
 
-| Detail Level | Min VRAM | Recommended GPUs |
-|---|---|---|
-| Low | 12 GB | RTX 4090, A5000 24GB |
-| Medium | 16 GB | RTX 4090, L40S, A6000 |
-| High | 24 GB | L40S, A6000, RTX 6000 Ada |
-
-- **CUDA**: 12.0+
-
-## Benchmark
-
-| GPU | Detail Level | Texture Res | Time |
-|---|---|---|---|
-| RTX 4090 | Low | 1024 | ~30s |
-| RTX 4090 | Medium | 1024 | ~60s |
-| RTX 4090 | High | 2048 | ~150s |
-| L40S | High | 2048 | ~90s |
-| A6000 | High | 2048 | ~100s |
+- Minimum: >=12GB VRAM
+- Recommended: RTX 4090, L40S, A6000 (>=24GB VRAM)
+- CUDA: 12.4+
 
 ## License
 
-Apache-2.0
+Based on Pixal3D architecture. Check model weights license for commercial terms.
