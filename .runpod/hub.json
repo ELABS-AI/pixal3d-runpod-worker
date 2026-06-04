@@ -2,7 +2,6 @@
   "title": "elabs / Pixal3D",
   "description": "Pixal3D generates high-quality 3D models from a single input image. Supports OBJ/GLB export, texture baking, and multiple detail levels. API: POST JSON with {image_base64, detail_level, output_format, texture_resolution} -> {model_obj_base64, model_glb_base64, texture_base64, wall_time_s}. GPU: requires >=12GB VRAM (RTX 4090, L40S, A6000+). Weighted at 86 on the Human Preference Score v2 benchmark for 3D generation. Based on Pixal3D architecture with advanced multi-view diffusion and neural surface reconstruction. Runs entirely on RunPod serverless infrastructure with no network volume required.",
   "type": "serverless",
-  "task": "image-to-3d",
   "category": "3d",
   "config": {
     "runsOn": "GPU",
