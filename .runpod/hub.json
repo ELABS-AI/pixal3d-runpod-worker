@@ -1,13 +1,14 @@
 {
   "title": "elabs / Pixal3D",
-  "description": "Pixal3D generates high-quality 3D models from a single input image. Supports OBJ/GLB export, texture baking, and multiple detail levels. API: POST JSON with {image_base64, detail_level, output_format, texture_resolution} -> {model_obj_base64, model_glb_base64, texture_base64, wall_time_s}. GPU: requires >=12GB VRAM (RTX 4090, L40S, A6000+). Weighted at 86 on the Human Preference Score v2 benchmark for 3D generation. Based on Pixal3D architecture with advanced multi-view diffusion and neural surface reconstruction. Runs entirely on RunPod serverless infrastructure with no network volume required.",
+  "description": "Image-to-3D generation using Pixal3D. Generates 3D meshes from a single input image. Input: {image_b64} -> Output: {mesh_b64, preview_b64, wall_time_s}.",
+  "category": "image",
   "type": "serverless",
-  "category": "3d",
+  "iconUrl": "https://pub-796a08821c1c483aaf5e274e0d03e350.r2.dev/hub-icons/pixal3d.svg",
   "config": {
     "runsOn": "GPU",
-    "containerDiskInGb": 60,
+    "containerDiskInGb": 20,
     "gpuCount": 1,
-    "gpuIds": "ADA_48,NVIDIA_RTX_4090,NVIDIA_L40S,NVIDIA_RTX_6000_ADA",
+    "gpuIds": "ADA_24,ADA_48_PRO,AMPERE_24",
     "allowedCudaVersions": [
       "12.8",
       "12.7",
@@ -21,31 +22,13 @@
     ],
     "env": [
       {
-        "key": "PYTORCH_CUDA_ALLOC_CONF",
-        "value": "expandable_segments:True"
+        "key": "HF_HOME",
+        "value": "/runpod-volume/models/huggingface"
       },
       {
-        "key": "HF_HUB_ENABLE_HF_TRANSFER",
-        "value": "1"
-      }
-    ],
-    "presets": [
-      {
-        "name": "Standard (medium detail)",
-        "defaults": {
-          "DETAIL_LEVEL": "medium",
-          "OUTPUT_FORMAT": "glb"
-        }
-      },
-      {
-        "name": "High Quality (high detail)",
-        "defaults": {
-          "DETAIL_LEVEL": "high",
-          "OUTPUT_FORMAT": "glb",
-          "TEXTURE_RESOLUTION": "2048"
-        }
+        "key": "HUGGINGFACE_HUB_CACHE",
+        "value": "/runpod-volume/models/huggingface/hub"
       }
     ]
-  },
-  "iconUrl": "https://pub-796a08821c1c483aaf5e274e0d03e350.r2.dev/hub-icons/pixal3d.svg"
+  }
 }
